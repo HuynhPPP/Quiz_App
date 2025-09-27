@@ -1,11 +1,13 @@
 // Combined quiz data from all sources
 import { capitalsData } from './capitalsData.js';
 import { itVocabularyData } from './itVocabularyData.js';
+import { footballData } from './footballData.js';
 
 // Combine all quiz data
 export const quizData = [
     ...capitalsData,
-    ...itVocabularyData
+    ...itVocabularyData,
+    ...footballData
 ];
 
 // Function to get questions by category
@@ -26,4 +28,4 @@ export const getRandomQuestions = (count = 10) => {
 };
 
 // Export individual data sources for specific use cases
-export { capitalsData, itVocabularyData };
+export { capitalsData, itVocabularyData, footballData };

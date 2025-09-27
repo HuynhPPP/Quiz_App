@@ -49,23 +49,9 @@ const Review = ({ quizData, userAnswers, handleBackToResult, handleRestartQuiz }
                         return (
                             <div key={index} className={className}>
                                 {option}
-                                {isUserAnswer && <span className="answer-label"> (Câu trả lời của bạn)</span>}
-                                {isCorrectAnswer && !isUserAnswer && <span className="answer-label"> (Đáp án đúng)</span>}
                             </div>
                         );
                     })}
-                </div>
-                
-                <div className="answer-status">
-                    {getUserAnswer() ? (
-                        isCorrect() ? (
-                            <p className='correct-answer'>✅ Câu trả lời của bạn là chính xác</p>
-                        ) : (
-                            <p className='incorrect-answer'>❌ Câu trả lời của bạn chưa chính xác. Đáp án đúng là: {quizData[currentQuestion].answer}</p>
-                        )
-                    ) : (
-                        <p className='no-answer'>⚠️ Bạn chưa trả lời câu này</p>
-                    )}
                 </div>
             </div>
 
