@@ -1,5 +1,5 @@
 import React from 'react'
-import { getAllCategories, getQuestionsByCategory, getRandomQuestions } from '../data/quizData'
+import { getAllCategories, getQuestionsByCategory, getRandomQuestions } from '../data/index'
 
 const QuizSelector = ({ onStartQuiz }) => {
     const categories = getAllCategories();
@@ -23,7 +23,7 @@ const QuizSelector = ({ onStartQuiz }) => {
         <div>
             <h2>Chọn chủ đề Quiz</h2>
             <p className="quiz-description">
-                Chọn một chủ đề để bắt đầu quiz về thủ đô các quốc gia
+                Chọn một chủ đề để bắt đầu quiz về thủ đô các quốc gia hoặc học tiếng Anh chuyên ngành
             </p>
             
             <div className="quiz-categories">
@@ -48,7 +48,8 @@ const QuizSelector = ({ onStartQuiz }) => {
                         'East Asia': '🇯🇵',
                         'Southeast Asia': '🇹🇭',
                         'South Asia': '🇮🇳',
-                        'Central Asia': '🇰🇿'
+                        'Central Asia': '🇰🇿',
+                        'Học tiếng Anh chuyên ngành': '📚'
                     };
                     
                     return (
