@@ -18,22 +18,28 @@ const PORT = process.env.PORT || 5000;
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau.'
-  }
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+  message: { error: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau.' }
 });
 
 // Middleware
 app.use(limiter);
+
+// CORS config
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',');
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy error: Origin not allowed'));
+    }
+  },
   credentials: true
 }));
+console.log('🌐 CORS allowed for:', allowedOrigins);
 
-// Log CORS configuration for debugging
-console.log('🌐 CORS configured for:', process.env.FRONTEND_URL || 'http://localhost:5173');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -82,5 +88,3 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error('❌ Lỗi kết nối MongoDB Atlas:', error.message);
     process.exit(1);
   });
-
-export default app;

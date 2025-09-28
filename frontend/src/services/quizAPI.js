@@ -10,7 +10,7 @@ class QuizAPI {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      return data.data;
+      return data.data || data;
     } catch (error) {
       console.error('Lỗi khi lấy danh mục:', error);
       throw error;
