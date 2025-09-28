@@ -121,3 +121,4 @@ Thumbs.db
 
 # Render specific
 render.yaml
+.history/

@@ -46,3 +46,4 @@ backend/build/
 # Temporary files
 tmp/
 temp/
+.history/
