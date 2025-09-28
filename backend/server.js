@@ -26,17 +26,26 @@ const limiter = rateLimit({
 // Middleware
 app.use(limiter);
 
-// CORS config
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',');
+// CORS config - Allow all origins in production
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? ['https://quiz-app-frontend-n7kd.onrender.com', 'https://quiz-app-frontend-n7kd.onrender.com/']
+  : (process.env.FRONTEND_URL || 'http://localhost:5173').split(',');
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('CORS policy error: Origin not allowed'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
 }));
 console.log('🌐 CORS allowed for:', allowedOrigins);
 
