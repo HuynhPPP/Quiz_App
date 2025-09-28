@@ -1,21 +1,9 @@
 services:
-  # Frontend Service
-  - type: web
-    name: quiz-app-frontend
-    env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: VITE_API_BASE_URL
-        value: https://quiz-app-backend.onrender.com/api
-
-  # Backend Service  
+  # Backend Service (sẽ serve cả frontend)
   - type: web
     name: quiz-app-backend
     env: node
-    buildCommand: cd backend && npm install
+    buildCommand: cd backend && npm install && cd ../frontend && npm install && npm run build
     startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
@@ -23,8 +11,8 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        sync: false
+        sync: false # Link to Render secret file or manually add
       - key: ADMIN_KEY
-        sync: false
+        sync: false # Link to Render secret file or manually add
       - key: FRONTEND_URL
-        value: https://quiz-app-frontend.onrender.com
+        value: https://quiz-app-backend.onrender.com # Same as backend URL

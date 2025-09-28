@@ -1,5 +1,5 @@
 // API service để giao tiếp với backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5001/api';
 
 class QuizAPI {
   // Lấy tất cả danh mục

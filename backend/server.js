@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 
 // Import routes
 import quizRoutes from './routes/quiz.js';
@@ -13,8 +14,10 @@ import categoryRoutes from './routes/category.js';
 // Load environment variables
 dotenv.config();
 
-const app = express();
+
 const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
+const app = express();
 
 // Rate limiting
 const limiter = rateLimit({
@@ -26,31 +29,18 @@ const limiter = rateLimit({
 // Middleware
 app.use(limiter);
 
-// CORS config - Allow all origins in production
-const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? ['https://quiz-app-frontend-n7kd.onrender.com', 'https://quiz-app-frontend-n7kd.onrender.com/']
-  : (process.env.FRONTEND_URL || 'http://localhost:5173').split(',');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS config - Allow all origins
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('CORS policy error: Origin not allowed'));
-    }
-  },
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
 }));
-console.log('🌐 CORS allowed for:', allowedOrigins);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+console.log('🌐 CORS configured for: all origins');
 
 // Routes
 app.use('/api/quiz', quizRoutes);
@@ -60,12 +50,23 @@ app.use('/api/admin/categories', categoryRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Quiz App Backend đang hoạt động',
     timestamp: new Date().toISOString()
   });
 });
+
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from frontend/dist
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  
+  // Catch-all handler: send back React's index.html file for any non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -87,11 +88,11 @@ app.use('*', (req, res) => {
 // Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log('✅ Kết nối MongoDB Atlas thành công');
     app.listen(PORT, () => {
       console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
     });
+    console.log('✅ Kết nối MongoDB Atlas thành công');
   })
   .catch((error) => {
     console.error('❌ Lỗi kết nối MongoDB Atlas:', error.message);
