@@ -1,9 +1,31 @@
 services:
+  # Backend Service (Node.js + Express)
   - type: web
-    name: quiz-app
-    env: static
-    buildCommand: npm install && npx vite build
-    staticPublishPath: ./dist
+    name: quiz-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false   # sẽ thêm trong dashboard Render (không commit password vào git)
+      - key: FRONTEND_URL
+        value: https://quiz-frontend.onrender.com
+      - key: ADMIN_KEY
+        sync: false
+
+  # Frontend (React + Vite build → static site)
+  - type: static
+    name: quiz-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://quiz-backend.onrender.com/api
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
