@@ -1,0 +1,13 @@
+# Render.com Build Configuration
+
+## Build Command
+npm run build
+
+## Publish Directory
+dist
+
+## Node Version
+18.x
+
+## Environment Variables
+NODE_ENV=production
